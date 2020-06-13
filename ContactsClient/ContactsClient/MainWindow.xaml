@@ -4,9 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContactsClient"
+        xmlns:viewModels="clr-namespace:ContactsClient.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Contacts" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainWindowVM, IsDesignTimeCreatable=True}">
     <Grid>
-        
+        <DataGrid ItemsSource="{Binding Contacts}"
+                  AutoGenerateColumns="False" 
+                  SelectionMode ="Single"
+                  SelectedItem="{Binding SelectedContact}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding DisplayName}" Width="*"/>
+                <DataGridTextColumn Header="Номер телефона" Binding="{Binding PhoneNumber[0]}" Width="*"/>
+                <DataGridTextColumn Header="Электронный адрес" Binding="{Binding EmailAddress[0]}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
