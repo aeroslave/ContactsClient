@@ -4,7 +4,7 @@
 
     using ContactsClient.Models;
 
-    using Google.Apis.People.v1.Data;
+    using Google.Apis.PeopleService.v1.Data;
 
     /// <summary>
     /// Mapper.
@@ -22,8 +22,9 @@
                 DisplayName = name?.DisplayName,
                 FirstName = name?.FamilyName,
                 LastName =  name?.GivenName,
-                PhoneNumber = person.PhoneNumbers?.Select(it => it.CanonicalForm).ToList(),
-                EmailAddress = person.EmailAddresses?.Select(it => it.Value).ToList()
+                PhoneNumbers = person.PhoneNumbers?.Select(it => it.CanonicalForm).ToList(),
+                EmailAddress = person.EmailAddresses?.Select(it => it.Value).ToList(),
+                GroupList = person.Memberships.Select(it => it.ContactGroupMembership.ContactGroupResourceName).ToList()
             };
         }
     }

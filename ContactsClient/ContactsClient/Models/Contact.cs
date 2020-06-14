@@ -13,8 +13,10 @@
 
         public string LastName { get; set; }
 
-        public List<string> PhoneNumber { get; set; }
+        public List<string> PhoneNumbers { get; set; }
 
         public List<string> EmailAddress { get; set; }
+
+        public List<string> GroupList { get; set; }
     }
 }
