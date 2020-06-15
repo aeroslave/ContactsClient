@@ -3,11 +3,18 @@
     using ContactsClient.ViewModels;
     using ContactsClient.Windows;
 
+    /// <summary>
+    /// Command for adding contact group.
+    /// </summary>
     public class AddGroupCommand : BaseTypedCommand<MainWindowVM>
     {
-        public override void Execute(MainWindowVM mainWindowVM)
+        /// <summary>
+        /// Executing command.
+        /// </summary>
+        /// <param name="mainWindowVM">View-model of main window.</param>
+        protected override void Execute(MainWindowVM mainWindowVM)
         {
-            var createGroupWindowVM = new CreateGroupWindowVM();
+            var createGroupWindowVM = new GroupWindowVM();
             var createGroupWindow = new CreateGroupWindow
             {
                 DataContext = createGroupWindowVM

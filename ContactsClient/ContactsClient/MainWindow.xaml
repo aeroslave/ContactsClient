@@ -10,8 +10,8 @@
         d:DataContext="{d:DesignInstance Type=viewModels:MainWindowVM, IsDesignTimeCreatable=True}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.25*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.25*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <ListBox ItemsSource="{Binding GroupNames}"
@@ -22,34 +22,45 @@
                 <ContextMenu>
                     <MenuItem Header="Добавить группу"
                               Command="{Binding AddGroupCommand}"
-                              CommandParameter="{Binding}"/>
+                              CommandParameter="{Binding}" />
                     <MenuItem Header="Удалить группу"
                               Command="{Binding DeleteGroupCommand}"
-                              CommandParameter="{Binding}"/>
+                              CommandParameter="{Binding}" />
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
 
-        <DataGrid 
+        <DataGrid
             Grid.Column="1"
             ItemsSource="{Binding VisibleContacts}"
-                  AutoGenerateColumns="False" 
-                  SelectionMode ="Single"
-                  SelectedItem="{Binding SelectedContact}" IsReadOnly="True">
+            AutoGenerateColumns="False"
+            SelectionMode="Single"
+            SelectedItem="{Binding SelectedContactVM}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding DisplayName}" Width="*"/>
-                <DataGridTextColumn Header="Номер телефона" Binding="{Binding PhoneNumbers[0]}" Width="*"/>
-                <DataGridTextColumn Header="Электронный адрес" Binding="{Binding EmailAddress[0]}" Width="*"/>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding DisplayName}" Width="*" />
+                <DataGridTextColumn Header="Номер телефона" Binding="{Binding PhoneNumbers[0].Value}" Width="*" />
             </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Добавить пользователя"
-                              Command="{Binding AddContactCommand}"
+                    <MenuItem Header="Редактировать пользователя"
+                              Command="{Binding EditContactCommand}"
                               CommandParameter="{Binding}"/>
                     
+                    <MenuItem Header="Добавить пользователя"
+                              Command="{Binding AddContactCommand}"
+                              CommandParameter="{Binding}" />
+
                     <MenuItem Header="Удалить пользователя"
                               Command="{Binding DeleteContactCommand}"
-                              CommandParameter="{Binding}"/>
+                              CommandParameter="{Binding}" />
+
+                    <MenuItem Header="Добавить пользователя в группу"
+                              Command="{Binding AddContactToGroupCommand}"
+                              CommandParameter="{Binding}" />
+
+                    <MenuItem Header="Удалить пользователя из группы"
+                              Command="{Binding RemoveContactFromGroupCommand}"
+                              CommandParameter="{Binding}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>

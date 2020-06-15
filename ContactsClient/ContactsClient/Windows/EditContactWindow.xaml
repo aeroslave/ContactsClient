@@ -1,0 +1,56 @@
+﻿<Window x:Class="ContactsClient.Windows.EditContactWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ContactsClient.Windows"
+        xmlns:models="clr-namespace:ContactsClient.Models"
+        mc:Ignorable="d"
+        Title="Edit Contact" SizeToContent="Height" Width="500"
+        d:DataContext="{d:DesignInstance Type=models:ContactVM, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label Content="Фамилия:" />
+                <TextBox Text="{Binding LastName}" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                <Label Content="Имя:" />
+                <TextBox Text="{Binding FirstName}" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Номера телефонов:" />
+                    <Button Content="+" Margin="5"
+                            Command="{Binding AddPhoneNumberCommand}"
+                            CommandParameter="{Binding}" />
+                </StackPanel>
+                <ListBox ItemsSource="{Binding PhoneNumbers}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Value}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Content="OK" Margin="5"
+                        IsDefault="True"
+                        IsEnabled="{Binding IsDataValid}"
+                        Click="OkButtonClick" />
+                <Button Content="Cancel" Margin="5"
+                        IsCancel="True" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

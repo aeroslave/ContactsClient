@@ -79,17 +79,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\AddContactCommand.cs" />
+    <Compile Include="Commands\AddContactToGroupCommand.cs" />
     <Compile Include="Commands\AddGroupCommand.cs" />
+    <Compile Include="Commands\AddPhoneNumberCommand.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\BaseTypedCommand.cs" />
+    <Compile Include="Commands\DeleteContactCommand.cs" />
+    <Compile Include="Commands\DeleteGroupCommand.cs" />
+    <Compile Include="Commands\EditContactCommand.cs" />
+    <Compile Include="Commands\RemoveContactFromGroupCommand.cs" />
     <Compile Include="ContactService\ContactService.cs" />
     <Compile Include="Converters\PersonConverter.cs" />
-    <Compile Include="Models\Contact.cs" />
-    <Compile Include="ViewModels\CreateGroupWindowVM.cs" />
+    <Compile Include="Models\ContactVM.cs" />
+    <Compile Include="ViewModels\GroupWindowVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
+    <Compile Include="ViewModels\PhoneNumberVM.cs" />
+    <Compile Include="ViewModels\SelectGroupWindowVM.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Windows\CreateGroupWindow.xaml.cs">
       <DependentUpon>CreateGroupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\EditContactWindow.xaml.cs">
+      <DependentUpon>EditContactWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\SelectGroupWindow.xaml.cs">
+      <DependentUpon>SelectGroupWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -104,6 +119,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows\CreateGroupWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\EditContactWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SelectGroupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

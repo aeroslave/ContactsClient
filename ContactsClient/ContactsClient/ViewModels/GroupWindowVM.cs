@@ -1,9 +1,15 @@
 ﻿namespace ContactsClient.ViewModels
 {
-    public class CreateGroupWindowVM : ViewModelBase
+    /// <summary>
+    /// Group view-model.
+    /// </summary>
+    public class GroupWindowVM : ViewModelBase
     {
         private string _groupName;
 
+        /// <summary>
+        /// Group name.
+        /// </summary>
         public string GroupName
         {
             get => _groupName;
@@ -15,6 +21,9 @@
             }
         }
 
+        /// <summary>
+        /// Data validity flag 
+        /// </summary>
         public bool IsDataValid => !string.IsNullOrWhiteSpace(_groupName);
     }
 }
