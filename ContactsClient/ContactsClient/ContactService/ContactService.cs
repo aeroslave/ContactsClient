@@ -1,18 +1,19 @@
 ﻿namespace ContactsClient.ContactService
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading;
+    using System.Windows;
 
+    using ContactsClient.Constants;
     using ContactsClient.Converters;
-    using ContactsClient.Models;
+    using ContactsClient.ViewModels;
 
     using Google.Apis.Auth.OAuth2;
-
     using Google.Apis.PeopleService.v1;
     using Google.Apis.PeopleService.v1.Data;
-
     using Google.Apis.Services;
 
     /// <summary>
@@ -48,27 +49,9 @@
         }
 
         /// <summary>
-        /// Get contacts VM.
+        /// List of contact groups.
         /// </summary>
-        /// <returns>Collection of contact view-models.</returns>
-        public ObservableCollection<ContactVM> GetContactVMs()
-        {
-            return new ObservableCollection<ContactVM>(Persons.Select(it => it.Convert()));
-        }
-
-        /// <summary>
-        /// Fill person list.
-        /// </summary>
-        private void GetPersons()
-        {
-            var peopleRequest = PeopleService.People.Connections.List("people/me");
-
-            peopleRequest.RequestMaskIncludeField =
-                "person.names,person.phoneNumbers,person.memberships";
-
-            var connectionsResponse = peopleRequest.Execute();
-            Persons = connectionsResponse.Connections.ToList();
-        }
+        public List<ContactGroup> Groups { get; private set; }
 
         /// <summary>
         /// Service for interacting with Peolpe API.
@@ -81,9 +64,28 @@
         private List<Person> Persons { get; set; }
 
         /// <summary>
-        /// List of contact groups.
+        /// Create group.
         /// </summary>
-        public List<ContactGroup> Groups { get; set; }
+        /// <param name="groupName">Name of group.</param>
+        public void CreateGroup(string groupName)
+        {
+            var contactGroup = new ContactGroup { Name = groupName };
+            var contactGroupRequest = new CreateContactGroupRequest { ContactGroup = contactGroup };
+
+            var request = PeopleService.ContactGroups.Create(contactGroupRequest);
+
+            try
+            {
+                request.Execute();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
+            GetGroups();
+        }
 
         /// <summary>
         /// Create person from contact.
@@ -95,9 +97,142 @@
             FillPersonData(contactVM, newPerson);
 
             var request = PeopleService.People.CreateContact(newPerson);
-            var createdPerson = request.Execute();
 
-            contactVM.ResourceName = createdPerson.ResourceName;
+            try
+            {
+                var createdPerson = request.Execute();
+                contactVM.ResourceName = createdPerson.ResourceName;
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
+            GetPersons();
+        }
+
+        /// <summary>
+        /// Delete contact.
+        /// </summary>
+        /// <param name="contactVM">View-model of contact.</param>
+        public void DeleteContact(ContactVM contactVM)
+        {
+            var request = PeopleService.People.DeleteContact(contactVM.ResourceName);
+
+            try
+            {
+                request.Execute();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
+            GetPersons();
+        }
+
+        /// <summary>
+        /// Delete group.
+        /// </summary>
+        /// <param name="groupName">Name of group.</param>
+        public void DeleteGroup(string groupName)
+        {
+            var group = Groups.FirstOrDefault(it => it.Name == groupName);
+            if (group == null)
+                return;
+
+            var request = PeopleService.ContactGroups.Delete(group.ResourceName);
+            request.DeleteContacts = false;
+
+            try
+            {
+                request.Execute();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get contacts VM.
+        /// </summary>
+        /// <returns>Collection of contact view-models.</returns>
+        public ObservableCollection<ContactVM> GetContactVMs()
+        {
+            return new ObservableCollection<ContactVM>(Persons.Select(it => it.Convert()));
+        }
+
+        /// <summary>
+        /// Add or remove contact from group.
+        /// </summary>
+        /// <param name="contactVM">View-model of contact.</param>
+        /// <param name="groupName">Name of group.</param>
+        /// <param name="needRemove">Remove flag.</param>
+        public void ModifyContactGroup(ContactVM contactVM, string groupName, bool needRemove)
+        {
+            var group = Groups.FirstOrDefault(it => it.Name == groupName);
+
+            var person = Persons.FirstOrDefault(it => it.ResourceName == contactVM.ResourceName);
+
+            if (group == null || person == null)
+                return;
+
+            var modifyMembersRequest = new ModifyContactGroupMembersRequest();
+
+            if (needRemove)
+                modifyMembersRequest.ResourceNamesToRemove = new List<string> { person.ResourceName };
+            else
+                modifyMembersRequest.ResourceNamesToAdd = new List<string> { person.ResourceName };
+
+            var request = PeopleService.ContactGroups.Members.Modify(modifyMembersRequest, group.ResourceName);
+
+            try
+            {
+                request.Execute();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
+            if (needRemove)
+                contactVM.GroupList.Remove(group.ResourceName);
+            else
+                contactVM.GroupList.Add(group.ResourceName);
+
+            GetGroups();
+        }
+
+        /// <summary>
+        /// Update contact.
+        /// </summary>
+        /// <param name="contactVM">View-model of contact.</param>
+        public void UpdateContact(ContactVM contactVM)
+        {
+            var person = Persons.FirstOrDefault(it => it.ResourceName == contactVM.ResourceName);
+
+            if (person == null)
+                return;
+
+            FillPersonData(contactVM, person);
+
+            var request = PeopleService.People.UpdateContact(person, person.ResourceName);
+            request.UpdatePersonFields = "names,phoneNumbers,memberships";
+
+            try
+            {
+                request.Execute();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
             GetPersons();
         }
 
@@ -126,114 +261,61 @@
         }
 
         /// <summary>
-        /// Delete contact.
-        /// </summary>
-        /// <param name="contactVM">View-model of contact.</param>
-        public void DeleteContact(ContactVM contactVM)
-        {
-            var request = PeopleService.People.DeleteContact(contactVM.ResourceName);
-            request.Execute();
-
-            GetPersons();
-        }
-
-        /// <summary>
-        /// Delete group.
-        /// </summary>
-        /// <param name="groupName">Name of group.</param>
-        public void DeleteGroup(string groupName)
-        {
-            var group = Groups.FirstOrDefault(it => it.Name == groupName);
-            if (group == null)
-                return;
-
-            var request = PeopleService.ContactGroups.Delete(group.ResourceName);
-            request.DeleteContacts = false;
-
-            request.Execute();
-        }
-
-        /// <summary>
-        /// Update contact.
-        /// </summary>
-        /// <param name="contactVM">View-model of contact.</param>
-        public void UpdateContact(ContactVM contactVM)
-        {
-            var person = Persons.FirstOrDefault(it => it.ResourceName == contactVM.ResourceName);
-
-            if (person == null)
-                return;
-
-            FillPersonData(contactVM, person);
-
-            var request = PeopleService.People.UpdateContact(person, person.ResourceName);
-            request.UpdatePersonFields = "names,phoneNumbers,memberships";
-            var updatedPerson = request.Execute();
-            GetPersons();
-        }
-
-        /// <summary>
-        /// Create group.
-        /// </summary>
-        /// <param name="groupName">Name of group.</param>
-        public void CreateGroup(string groupName)
-        {
-            var contactGroup = new ContactGroup { Name = groupName };
-            var contactGroupRequest = new CreateContactGroupRequest { ContactGroup = contactGroup };
-            
-            var request = PeopleService.ContactGroups.Create(contactGroupRequest);
-            request.Execute();
-            GetGroups();
-        }
-
-        /// <summary>
-        /// Add or remove contact from group.
-        /// </summary>
-        /// <param name="contactVM">View-model of contact.</param>
-        /// <param name="groupName">Name of group.</param>
-        /// <param name="needRemove">Remove flag.</param>
-        public void ModifyContactGroup(ContactVM contactVM, string groupName, bool needRemove)
-        {
-            var group = Groups.FirstOrDefault(it => it.Name == groupName);
-
-            var person = Persons.FirstOrDefault(it => it.ResourceName == contactVM.ResourceName);
-
-            if (group == null || person == null)
-                return;
-
-            var modifyMembersRequest = new ModifyContactGroupMembersRequest();
-
-            if (needRemove)
-            {
-                modifyMembersRequest.ResourceNamesToRemove = new List<string> { person.ResourceName };
-            }
-            else
-            {
-                modifyMembersRequest.ResourceNamesToAdd = new List<string> { person.ResourceName };
-            }
-
-            var request = PeopleService.ContactGroups.Members.Modify(modifyMembersRequest, group.ResourceName);
-            var response = request.Execute();
-
-            if (needRemove)
-                contactVM.GroupList.Remove(group.ResourceName);
-            else
-                contactVM.GroupList.Add(group.ResourceName);
-
-            GetGroups();
-        }
-
-        /// <summary>
         /// Get contact group.
         /// </summary>
         private void GetGroups()
         {
             var listRequest = PeopleService.ContactGroups.List();
-            var groupsResponse = listRequest.Execute();
-            var groups = groupsResponse.ContactGroups.ToList();
 
-            Groups = groups.Where(it => it.Name != "myContacts"
-            && it.Name != "all").ToList();
+            try
+            {
+                var groupsResponse = listRequest.Execute();
+                var groups = groupsResponse.ContactGroups.ToList();
+
+                Groups = groups.Where(it => !IsSystemGroup(it.Name)).ToList();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        /// <summary>
+        /// Fill person list.
+        /// </summary>
+        private void GetPersons()
+        {
+            var peopleRequest = PeopleService.People.Connections.List("people/me");
+
+            peopleRequest.RequestMaskIncludeField =
+                "person.names,person.phoneNumbers,person.memberships";
+
+            var connectionsResponse = peopleRequest.Execute();
+            Persons = connectionsResponse.Connections.ToList();
+        }
+
+        /// <summary>
+        /// Check if it system group.
+        /// </summary>
+        /// <param name="groupName">Group name</param>
+        /// <returns>True - if it is.</returns>
+        private static bool IsSystemGroup(string groupName)
+        {
+            switch (groupName)
+            {
+                case SystemGroupNames.ALL:
+                case SystemGroupNames.MY_CONTACTS:
+                case SystemGroupNames.BLOCKED:
+                case SystemGroupNames.CHAT:
+                case SystemGroupNames.COWORKERS:
+                case SystemGroupNames.FAMILY:
+                case SystemGroupNames.FRIENDS:
+                case SystemGroupNames.STARRED:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
     }
 }

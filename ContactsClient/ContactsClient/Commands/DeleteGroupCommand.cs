@@ -1,5 +1,8 @@
 ﻿namespace ContactsClient.Commands
 {
+    using System.Windows;
+
+    using ContactsClient.Constants;
     using ContactsClient.ViewModels;
 
     /// <summary>
@@ -16,6 +19,12 @@
             var groupName = mainWindowVM.SelectedGroup;
             if (string.IsNullOrWhiteSpace(groupName))
                 return;
+
+            if (groupName == SystemGroupNames.ALL_CONTACTS)
+            {
+                MessageBox.Show("You can't delete this group");
+                return;
+            }
 
             mainWindowVM.ContactService.DeleteGroup(groupName);
             mainWindowVM.GroupNames.Remove(groupName);

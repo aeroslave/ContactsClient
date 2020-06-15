@@ -28,6 +28,7 @@
                 return;
 
             mainWindowVM.ContactService.ModifyContactGroup(selectedContact, selectGroupWindowVM.GroupName, false);
+            selectedContact.GroupList.Add(selectGroupWindowVM.GroupName);
         }
     }
 }

@@ -3,7 +3,6 @@
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    using ContactsClient.Models;
     using ContactsClient.ViewModels;
 
     using Google.Apis.PeopleService.v1.Data;

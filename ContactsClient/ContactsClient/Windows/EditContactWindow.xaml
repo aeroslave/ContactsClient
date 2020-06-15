@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ContactsClient.Windows"
-        xmlns:models="clr-namespace:ContactsClient.Models"
+        xmlns:viewModels="clr-namespace:ContactsClient.ViewModels"
         mc:Ignorable="d"
         Title="Edit Contact" SizeToContent="Height" Width="500"
-        d:DataContext="{d:DesignInstance Type=models:ContactVM, IsDesignTimeCreatable=True}">
+        d:DataContext="{d:DesignInstance Type=viewModels:ContactVM, IsDesignTimeCreatable=True}">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>

@@ -4,8 +4,8 @@
     using System.Linq;
 
     using ContactsClient.Commands;
+    using ContactsClient.Constants;
     using ContactsClient.ContactService;
-    using ContactsClient.Models;
 
     /// <summary>
     /// ViewModel for main window.
@@ -27,9 +27,9 @@
             ContactVMs = ContactService.GetContactVMs();
 
             GroupNames =
-                new ObservableCollection<string>(ContactService.Groups.Select(it => it.Name)) { "Все контакты" };
+                new ObservableCollection<string>(ContactService.Groups.Select(it => it.Name)) { SystemGroupNames.ALL_CONTACTS };
 
-            SelectedGroup = "Все контакты";
+            SelectedGroup = SystemGroupNames.ALL_CONTACTS;
 
             AddGroupCommand = new AddGroupCommand();
             AddContactToGroupCommand = new AddContactToGroupCommand();
@@ -153,7 +153,7 @@
         /// </summary>
         private void UpdateVisibleContacts()
         {
-            if (_selectedGroup == "Все контакты")
+            if (_selectedGroup == SystemGroupNames.ALL_CONTACTS)
             {
                 VisibleContacts = new ObservableCollection<ContactVM>(ContactVMs);
             }

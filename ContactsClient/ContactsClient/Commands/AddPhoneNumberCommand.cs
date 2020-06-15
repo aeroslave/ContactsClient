@@ -1,6 +1,5 @@
 ﻿namespace ContactsClient.Commands
 {
-    using ContactsClient.Models;
     using ContactsClient.ViewModels;
 
     /// <summary>
