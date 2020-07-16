@@ -22,7 +22,7 @@
             if (editContactWindow.ShowDialog() != true)
                 return;
 
-            mainWindowVM.ContactService.CreatePerson(contactVM);
+            mainWindowVM.ContactService.CreateContact(contactVM);
             mainWindowVM.ContactVMs.Add(contactVM);
             mainWindowVM.Update();
         }
