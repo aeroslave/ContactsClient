@@ -26,6 +26,17 @@
         /// </summary>
         public ContactService()
         {
+            CreateService();
+
+            GetPersons();
+            GetGroups();
+        }
+
+        /// <summary>
+        /// Create people service.
+        /// </summary>
+        private void CreateService()
+        {
             // Create OAuth credential.
             var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
@@ -43,9 +54,6 @@
                 HttpClientInitializer = credential,
                 ApplicationName = "ContactsClient2"
             });
-
-            GetPersons();
-            GetGroups();
         }
 
         /// <summary>
@@ -56,7 +64,7 @@
         /// <summary>
         /// Service for interacting with Peolpe API.
         /// </summary>
-        private PeopleServiceService PeopleService { get; }
+        private PeopleServiceService PeopleService { get; set; }
 
         /// <summary>
         /// List of persons.
