@@ -27,7 +27,8 @@
             ContactVMs = ContactService.GetContactVMs();
 
             GroupNames =
-                new ObservableCollection<string>(ContactService.Groups.Select(it => it.Name)) { SystemGroupNames.ALL_CONTACTS };
+                new ObservableCollection<string>(ContactService.Groups.Select(it => it.Name))
+                    { SystemGroupNames.ALL_CONTACTS };
 
             SelectedGroup = SystemGroupNames.ALL_CONTACTS;
 
