@@ -99,7 +99,7 @@
         /// Create person from contact.
         /// </summary>
         /// <param name="contactVM">Contact.</param>
-        public void CreatePerson(ContactVM contactVM)
+        public void CreateContact(ContactVM contactVM)
         {
             var newPerson = new Person();
             FillPersonData(contactVM, newPerson);
